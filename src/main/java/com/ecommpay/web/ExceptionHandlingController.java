@@ -15,7 +15,6 @@ class ExceptionHandlingController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlingController.class);
 
-
     @ExceptionHandler(BalanceException.class)
     @ResponseBody
     public BaseResponse balanceException(BalanceException e) {

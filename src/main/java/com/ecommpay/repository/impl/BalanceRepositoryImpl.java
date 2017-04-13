@@ -10,14 +10,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 @Repository
 public class BalanceRepositoryImpl implements BalanceRepository {
 
-    private static final int BCRYPT_LOG_ROUNDS = 2;
+    private static final int BCRYPT_LOG_ROUNDS = 10;
     private static final Logger LOGGER = LoggerFactory.getLogger(BalanceRepositoryImpl.class);
     private final JdbcTemplate template;
 
@@ -27,7 +26,6 @@ public class BalanceRepositoryImpl implements BalanceRepository {
     }
 
     @Override
-    @Transactional
     public void createAgent(String login, String password) {
         try {
             LOGGER.info("Creating new agent with login [{}]", login);
@@ -60,7 +58,7 @@ public class BalanceRepositoryImpl implements BalanceRepository {
     }
 
     private static String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt(10));
+        return BCrypt.hashpw(password, BCrypt.gensalt(BCRYPT_LOG_ROUNDS));
     }
 
     private static void checkUniqueLoginConstraint(DataIntegrityViolationException e) {
