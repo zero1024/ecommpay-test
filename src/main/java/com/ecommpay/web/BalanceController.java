@@ -29,7 +29,7 @@ public class BalanceController {
         this.repository = repository;
     }
 
-    @RequestMapping(path = "/balance", method = POST, consumes = APPLICATION_XML_VALUE, produces = APPLICATION_XML_VALUE)
+    @RequestMapping(method = POST, consumes = APPLICATION_XML_VALUE, produces = APPLICATION_XML_VALUE)
     public BaseResponse post(@RequestBody @Valid BaseRequest request) {
         switch (request.getRequestType()) {
             case "CREATE-AGT":

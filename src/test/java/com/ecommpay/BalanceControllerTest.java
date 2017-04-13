@@ -36,7 +36,7 @@ public class BalanceControllerTest {
         //1. создаем агента
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
-        ResponseEntity<String> res = restTemplate.exchange("/balance", POST,
+        ResponseEntity<String> res = restTemplate.exchange("/", POST,
                 new HttpEntity<>(content("successTest1.xml"), headers),
                 String.class);
 
@@ -44,7 +44,7 @@ public class BalanceControllerTest {
         assert XMLUnit.compareXML(res.getBody(), content("responseWithCode0.xml")).identical();
 
         //2. проверяем баланс
-        res = restTemplate.exchange("/balance", POST,
+        res = restTemplate.exchange("/", POST,
                 new HttpEntity<>(content("successTest2.xml"), headers),
                 String.class);
 
@@ -52,7 +52,7 @@ public class BalanceControllerTest {
         assert XMLUnit.compareXML(res.getBody(), content("responseWithBalance0.xml")).identical();
 
         //3. проверяем баланс у пользователя у которого есть деньги на счету
-        res = restTemplate.exchange("/balance", POST,
+        res = restTemplate.exchange("/", POST,
                 new HttpEntity<>(content("successTest3.xml"), headers),
                 String.class);
 
@@ -65,13 +65,67 @@ public class BalanceControllerTest {
         for (int i = 1; i < 4; i++) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_XML);
-            ResponseEntity<String> res = restTemplate.exchange("/balance", POST,
+            ResponseEntity<String> res = restTemplate.exchange("/", POST,
                     new HttpEntity<>(content("incorrectBodyTest" + i + ".xml"), headers),
                     String.class);
 
             assert res.getStatusCodeValue() == 200;
             assert XMLUnit.compareXML(res.getBody(), content("responseWithCode2.xml")).identical();
         }
+    }
+
+    @Test
+    public void agentAlreadyExistsTest() throws Exception {
+        //1. создаем агента
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        ResponseEntity<String> res = restTemplate.exchange("/", POST,
+                new HttpEntity<>(content("agentAlreadyExistsTest.xml"), headers),
+                String.class);
+
+        assert res.getStatusCodeValue() == 200;
+        assert XMLUnit.compareXML(res.getBody(), content("responseWithCode0.xml")).identical();
+
+        //2. создаем такого же агента
+        res = restTemplate.exchange("/", POST,
+                new HttpEntity<>(content("agentAlreadyExistsTest.xml"), headers),
+                String.class);
+
+        assert res.getStatusCodeValue() == 200;
+        assert XMLUnit.compareXML(res.getBody(), content("responseWithCode1.xml")).identical();
+    }
+
+    @Test
+    public void agentNotFoundTest() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        ResponseEntity<String> res = restTemplate.exchange("/", POST,
+                new HttpEntity<>(content("agentNotFoundTest.xml"), headers),
+                String.class);
+
+        assert res.getStatusCodeValue() == 200;
+        assert XMLUnit.compareXML(res.getBody(), content("responseWithCode3.xml")).identical();
+    }
+
+    @Test
+    public void incorrectPasswordTest() throws Exception {
+        //1. создаем агента
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        ResponseEntity<String> res = restTemplate.exchange("/", POST,
+                new HttpEntity<>(content("incorrectPasswordTest1.xml"), headers),
+                String.class);
+
+        assert res.getStatusCodeValue() == 200;
+        assert XMLUnit.compareXML(res.getBody(), content("responseWithCode0.xml")).identical();
+
+        //2. проверяем баланс неправильно указав пароль
+        res = restTemplate.exchange("/", POST,
+                new HttpEntity<>(content("incorrectPasswordTest2.xml"), headers),
+                String.class);
+
+        assert res.getStatusCodeValue() == 200;
+        assert XMLUnit.compareXML(res.getBody(), content("responseWithCode4.xml")).identical();
 
     }
 
