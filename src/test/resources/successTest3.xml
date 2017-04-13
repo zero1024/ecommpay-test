@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<request>
+    <request-type>GET-BALANCE</request-type>
+    <login>testUser</login>
+    <password>testPassword</password>
+</request>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 import static com.ecommpay.AppCodes.SUCCESS;
@@ -29,7 +30,7 @@ public class BalanceController {
     }
 
     @RequestMapping(path = "/balance", method = POST, consumes = APPLICATION_XML_VALUE, produces = APPLICATION_XML_VALUE)
-    public BaseResponse post(@RequestBody BaseRequest request) {
+    public BaseResponse post(@RequestBody @Valid BaseRequest request) {
         switch (request.getRequestType()) {
             case "CREATE-AGT":
                 repository.createAgent(request.getLogin(), request.getPassword());
